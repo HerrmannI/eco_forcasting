@@ -159,3 +159,23 @@ print(matrix.HQ)
 #*LE ACF ET PACF N'AIDENT PAS
 #*L'IDEAL SERAIT AUTO.ARIMA MAIS CA MARCHE PAS SUR MON ORDI MAINTENANT. 
 #*NORMALEMENT LE MOINS DE PARAMETRE POSSIBLE, LE MIEUX, JE PENSE Y A TROP
+
+#Make it stationary by difference
+ndiffs(covid_ts_se)
+stationaryTS <- diff(covid_ts_se, differences= 1)
+plot(stationaryTS, type="l", main="Differenced and Stationary")
+adf.test(stationaryTS, alternative = "stationary")
+acf2(stationaryTS, main="ACF and PACF")
+
+#Auto.arima
+plot(stationaryTS, type = "l", main = "Detrended and deseasonalized COVID-19 CASES", ylab = "Daily Cases", xlab="Time, in days")
+fit_basic1<- auto.arima(stationaryTS)
+
+#Forecast to see preliminary results 
+forecast_1<-forecast(fit_basic1, h=7)
+plot(forecast_1)
+plot(forecast_1$residuals)
+acf(forecast_1$residuals)
+pacf(forecast_1$residuals)
+summary(fit_basic1)
+qqnorm(forecast_1$residuals)
